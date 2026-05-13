@@ -3,7 +3,7 @@
 ## 1. 基础信息
 
 - Doc ID: SD-2026-001
-- 状态: Draft
+- 状态: In Review
 - 创建时间: 2026-05-12
 - 负责人: \[待定]
 - 关联文档: PS-2026-001 (Product Spec), tech-stack.yaml
