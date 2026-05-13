@@ -1,0 +1,31 @@
+# .gitignore
+# 依赖
+node_modules/
+__pycache__/
+venv/
+.env
+
+# 日志与缓存
+*.log
+logs/
+.cache/
+
+# 构建产物
+dist/
+build/
+*.egg-info/
+target/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 环境配置
+.env
+*.local.yaml

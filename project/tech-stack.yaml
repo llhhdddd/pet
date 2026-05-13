@@ -1,0 +1,15 @@
+# 技术栈配置
+basic:
+  language: Python 3.11
+  coding-standard: PEP 8
+  version-control: Git
+
+backend:
+  framework: FastAPI
+  database: PostgreSQL 15
+  orm: SQLAlchemy 2.0
+
+devops:
+  ci-cd: GitHub Actions
+  container: Docker
+
