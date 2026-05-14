@@ -1,5 +1,4 @@
-# .gitignore
-# 依赖
+# 依赖目录
 node_modules/
 __pycache__/
 venv/
@@ -9,23 +8,57 @@ venv/
 *.log
 logs/
 .cache/
+.pytest_cache/
+.coverage
 
 # 构建产物
 dist/
 build/
 *.egg-info/
 target/
+*.pyc
+*.pyo
+*.pyd
 
-# IDE
+# IDE配置
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# OS
 .DS_Store
 Thumbs.db
 
 # 环境配置
 .env
+.env.local
+.env.*.local
 *.local.yaml
+
+# Docker
+docker-compose.override.yml
+
+# 数据库备份
+*.sql
+*.dump
+backup/
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+
+# 编辑器备份
+*~
+.#*
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# 操作系统
+.Spotlight-V100/
+.Trashes/
+ehthumbs.db
+Icon?
+Network Trash Folder/
+Temporary Items/
+.apdisk

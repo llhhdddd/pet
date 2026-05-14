@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: pet_db
+    environment:
+      POSTGRES_DB: pet_db
+      POSTGRES_USER: pet_user
+      POSTGRES_PASSWORD: pet_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pet_user -d pet_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: pet_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    container_name: pet_api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://pet_user:pet_password@db/pet_db
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET_KEY: your-secret-key-here
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
