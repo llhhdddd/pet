@@ -31,6 +31,22 @@ def get_db():
 
 
 def init_db():
-    """初始化数据库表"""
-    from app.models import __all__  # noqa: F401 - 确保所有模型被导入
+    """初始化数据库表，并创建默认账号"""
+    from app.models import __all__  # noqa: F401
     Base.metadata.create_all(bind=engine)
+
+    # 种子数据：首次运行时创建默认账号
+    from app.utils.security import get_password_hash
+    from app.models.user import User
+    db = SessionLocal()
+    try:
+        if db.query(User).count() == 0:
+            db.add(User(username='student', email='student@test.com',
+                hashed_password=get_password_hash('123456789'),
+                role='student', is_active=True, is_verified=True))
+            db.add(User(username='teacher', email='teacher@test.com',
+                hashed_password=get_password_hash('987654321'),
+                role='teacher', is_active=True, is_verified=True))
+            db.commit()
+    finally:
+        db.close()

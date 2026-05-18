@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Building2, Plus, Users, Trophy, X, LogIn, Copy, CheckCircle, AlertCircle } from 'lucide-react'
+import { Building2, Plus, Users, Trophy, X, LogIn, Copy, CheckCircle, AlertCircle, Trash2 } from 'lucide-react'
 import Card from '../components/common/Card'
 import Button from '../components/common/Button'
 import useStore from '../store/useStore'
@@ -29,6 +29,7 @@ function ClassPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const fetchClasses = async () => {
     try {
@@ -81,6 +82,22 @@ function ClassPage() {
     navigator.clipboard.writeText(code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDeleteClass = async () => {
+    if (!selectedClass) return
+    setLoading(true)
+    try {
+      await classApi.deleteClass(selectedClass.id)
+      setShowDetail(false)
+      setShowDeleteConfirm(false)
+      setSelectedClass(null)
+      showMsg('success', '班级已删除')
+      fetchClasses()
+    } catch {
+      showMsg('error', '删除失败')
+    }
+    setLoading(false)
   }
 
   return (
@@ -225,8 +242,13 @@ function ClassPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 flex gap-3">
               <Button onClick={() => setShowDetail(false)} variant="secondary">关闭</Button>
+              {isTeacher && (
+                <Button variant="danger" onClick={() => setShowDeleteConfirm(true)}>
+                  <Trash2 className="w-4 h-4" /> 删除班级
+                </Button>
+              )}
             </div>
           </Card>
         </div>
@@ -248,6 +270,28 @@ function ClassPage() {
               <Button onClick={() => setShowCreate(false)} variant="secondary">取消</Button>
               <Button onClick={handleCreateClass} disabled={loading || !newClassName.trim()}>
                 {loading ? '创建中...' : '创建'}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* 删除确认弹窗 */}
+      {showDeleteConfirm && selectedClass && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-red-500" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">确认删除班级？</h3>
+            <p className="text-gray-500 mb-6">
+              将永久删除 <span className="font-bold text-red-600">{selectedClass.name}</span>，
+              包括班级下的所有任务和小组数据，此操作不可撤销。
+            </p>
+            <div className="flex gap-3">
+              <Button onClick={() => setShowDeleteConfirm(false)} variant="secondary" className="flex-1">取消</Button>
+              <Button onClick={handleDeleteClass} variant="danger" className="flex-1" disabled={loading}>
+                {loading ? '删除中...' : '确认删除'}
               </Button>
             </div>
           </Card>

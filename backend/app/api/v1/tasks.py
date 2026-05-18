@@ -512,11 +512,15 @@ def get_task_submissions(
     return result
 
 
+class GradeRequest(BaseModel):
+    score: float
+    feedback: Optional[str] = None
+
+
 @router.put("/submissions/{submission_id}/grade")
 def grade_submission(
     submission_id: int,
-    score: float,
-    feedback: Optional[str] = None,
+    request: GradeRequest,
     db: Session = Depends(get_db),
     current_teacher: User = Depends(get_current_teacher)
 ):
@@ -538,14 +542,14 @@ def grade_submission(
             detail="您不是该班级的创建者"
         )
     
-    if score < 0 or score > task.max_score:
+    if request.score < 0 or request.score > task.max_score:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"分数必须在 0-{task.max_score} 之间"
         )
-    
-    submission.score = score
-    submission.feedback = feedback
+
+    submission.score = request.score
+    submission.feedback = request.feedback
     submission.status = SubmissionStatus.GRADED
     submission.graded_at = datetime.now()
     

@@ -190,22 +190,28 @@ def get_group(
 def create_group(
     request: GroupCreateRequest,
     db: Session = Depends(get_db),
-    current_teacher: User = Depends(get_current_teacher)
+    current_user: User = Depends(get_current_active_user)
 ):
-    """创建小组（教师权限）"""
+    """创建小组"""
     class_ = db.query(Class).filter(Class.id == request.class_id).first()
-    
+
     if not class_:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="班级不存在"
-        )
-    
-    if class_.teacher_id != current_teacher.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="您不是该班级的创建者"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="班级不存在")
+
+    # 教师：必须是该班级的创建者
+    if current_user.role == "teacher":
+        if class_.teacher_id != current_user.id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="您不是该班级的创建者")
+    else:
+        # 学生：必须是该班级成员
+        is_member = db.query(GroupMember).join(
+            Group, GroupMember.group_id == Group.id
+        ).filter(
+            Group.class_id == class_.id,
+            GroupMember.user_id == current_user.id
+        ).first()
+        if not is_member:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="您不是该班级成员")
     
     group = Group(
         class_id=request.class_id,
@@ -216,9 +222,20 @@ def create_group(
     )
     
     db.add(group)
+    db.flush()
+
+    # 自动将创建者加入小组
+    member = GroupMember(
+        group_id=group.id,
+        user_id=current_user.id,
+        contribution=0.0
+    )
+    db.add(member)
     db.commit()
     db.refresh(group)
-    
+
+    member_count = db.query(GroupMember).filter(GroupMember.group_id == group.id).count()
+
     return {
         "id": group.id,
         "class_id": group.class_id,
@@ -230,7 +247,7 @@ def create_group(
         "gold_balance": group.gold_balance,
         "growth_value": group.growth_value,
         "health_value": group.health_value,
-        "member_count": 0,
+        "member_count": member_count,
         "created_at": str(group.created_at)
     }
 
