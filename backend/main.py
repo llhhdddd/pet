@@ -1,10 +1,17 @@
 """
 小组学习陪伴宠物系统 - 后端 API
 """
+import sys
+import os
+
+# 确保本地 app 包优先于 site-packages 中的同名包
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.core.database import init_db
 from app.api.v1 import api_router
 
 
@@ -14,7 +21,8 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
         version="1.0.0",
-        openapi_url=f"{settings.API_V1_PREFIX}/openapi.json"
+        openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
+        redirect_slashes=False
     )
     
     # 配置 CORS
@@ -44,6 +52,9 @@ def create_app() -> FastAPI:
 
 # 创建应用实例
 app = create_app()
+
+# 初始化数据库表
+init_db()
 
 
 if __name__ == "__main__":

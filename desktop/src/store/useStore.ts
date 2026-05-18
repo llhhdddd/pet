@@ -87,7 +87,7 @@ const useStore = create<AppState>()(
       setTasks: (tasks) => set({ tasks }),
       setGoldBalance: (balance) => set({ goldBalance: balance }),
       setRememberMe: (remember) => set({ rememberMe: remember }),
-      logout: () => set({ 
+      logout: () => set({
         user: null, 
         token: null, 
         currentGroup: null, 

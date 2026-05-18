@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Coins, TrendingUp, ShoppingCart, History, ArrowUpRight, ArrowDownRight, Gift, Zap } from 'lucide-react'
+import { Coins, TrendingUp, ShoppingCart, History, ArrowUpRight, ArrowDownRight, Zap } from 'lucide-react'
 import Card from '../components/common/Card'
 import Button from '../components/common/Button'
 import useStore from '../store/useStore'
@@ -44,7 +44,7 @@ function Gold() {
     { id: 8, amount: 5, transaction_type: 'earn', source_type: 'task_complete', description: '完成英语预习', created_at: '2026-05-11 16:00' },
   ])
 
-  const [shopItems, setShopItems] = useState<ShopItem[]>([
+  const [shopItems] = useState<ShopItem[]>([
     { id: 1, name: '普通食物', description: '恢复宠物20点饱食度', price: 5, item_type: 'food', effect: '+20 饱食度', emoji: '🍪' },
     { id: 2, name: '美味食物', description: '恢复宠物40点饱食度和10点健康值', price: 15, item_type: 'food', effect: '+40 饱食度 +10 健康', emoji: '🍦' },
     { id: 3, name: '特殊食物', description: '恢复宠物60点饱食度和20点健康值，额外获得成长值', price: 30, item_type: 'food', effect: '+60 饱食度 +20 健康 +10 成长', emoji: '🎂' },
@@ -134,8 +134,8 @@ function Gold() {
           <Coins className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">金币经济</h2>
-          <p className="text-white/60">管理你的金币和消费记录</p>
+          <h2 className="text-2xl font-bold text-orange-800">金币经济</h2>
+          <p className="text-orange-500">管理你的金币和消费记录</p>
         </div>
       </div>
 

@@ -4,10 +4,11 @@ import { Mail, Lock, Phone, User, Eye, EyeOff, ChevronRight, CheckCircle, AlertC
 import Input from '../components/common/Input'
 import Button from '../components/common/Button'
 import useStore from '../store/useStore'
+import { authApi } from '../services/api'
 
 function Login() {
   const navigate = useNavigate()
-  const { login, user } = useStore()
+  const { setUser, setToken, user } = useStore()
 
   const [isLogin, setIsLogin] = useState(true)
   const [role, setRole] = useState<'student' | 'teacher'>('student')
@@ -49,7 +50,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'teacher' ? '/class' : '/home')
+      navigate(user.role === 'teacher' ? '/class' : '/')
     }
   }, [user, navigate])
 
@@ -123,41 +124,69 @@ function Login() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return
-    
+
     setIsSubmitting(true)
-    
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    if (isLogin) {
-      login({
-        username: formData.username,
-        role,
-        rememberMe: isRememberMe,
-      })
-      setSuccessMessage('登录成功！正在跳转...')
-      setTimeout(() => {
-        navigate(role === 'teacher' ? '/class' : '/home')
-      }, 1000)
-    } else {
-      if (currentStep === 1) {
-        setIsVerifying(true)
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setIsVerifying(false)
-        setSuccessMessage('验证码已发送！')
-        setCurrentStep(2)
-      } else {
-        login({
-          username: formData.username,
-          role,
-          rememberMe: isRememberMe,
+    setErrors({})
+
+    try {
+      if (isLogin) {
+        // 调用后端登录 API
+        const response = await authApi.login(formData.username, formData.password)
+        const { access_token, user_id, username: uname, role: userRole } = response.data
+
+        setToken(access_token)
+        setUser({
+          id: user_id,
+          username: uname,
+          email: '',
+          role: userRole,
+          is_active: true,
         })
-        setSuccessMessage('注册成功！正在跳转...')
+        setSuccessMessage('登录成功！正在跳转...')
         setTimeout(() => {
-          navigate(role === 'teacher' ? '/class' : '/home')
+          navigate(userRole === 'teacher' ? '/class' : '/')
         }, 1000)
+      } else {
+        // 注册流程
+        if (currentStep === 1) {
+          setIsVerifying(true)
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          setIsVerifying(false)
+          setSuccessMessage('验证码已发送！')
+          setCurrentStep(2)
+        } else {
+          // 调用注册 API
+          const response = await authApi.register(
+            formData.username,
+            formData.email,
+            formData.password,
+            role
+          )
+          const { id: userId, username: uname, role: userRole } = response.data
+
+          setToken('')  // 注册后需要重新登录获取 token
+          setUser({
+            id: userId,
+            username: uname,
+            email: formData.email,
+            role: userRole,
+            is_active: true,
+          })
+          setSuccessMessage('注册成功！正在跳转...')
+          setTimeout(() => {
+            navigate(userRole === 'teacher' ? '/class' : '/')
+          }, 1000)
+        }
+      }
+    } catch (err: any) {
+      const detail = err.response?.data?.detail
+      if (detail) {
+        setErrors({ general: typeof detail === 'string' ? detail : '请求失败' })
+      } else {
+        setErrors({ general: '网络错误，请确认后端已启动' })
       }
     }
-    
+
     setIsSubmitting(false)
   }
 
@@ -361,7 +390,7 @@ function Login() {
               label="用户名"
               icon={<User className="w-5 h-5 text-gray-400" />}
               value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
+              onChange={(value) => handleInputChange('username', value)}
               placeholder="请输入用户名"
               error={errors.username}
             />
@@ -373,7 +402,7 @@ function Login() {
                 icon={<Mail className="w-5 h-5 text-gray-400" />}
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={(value) => handleInputChange('email', value)}
                 placeholder="请输入邮箱地址"
                 error={errors.email}
               />
@@ -386,7 +415,7 @@ function Login() {
                 icon={<Phone className="w-5 h-5 text-gray-400" />}
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
+                onChange={(value) => handleInputChange('phone', value)}
                 placeholder="请输入手机号码"
                 error={errors.phone}
               />
@@ -401,8 +430,8 @@ function Login() {
                     icon={<Lock className="w-5 h-5 text-gray-400" />}
                     type="text"
                     value={verificationCode}
-                    onChange={(e) => {
-                      setVerificationCode(e.target.value)
+                    onChange={(value) => {
+                      setVerificationCode(value)
                       if (errors.verificationCode) {
                         setErrors(prev => ({ ...prev, verificationCode: '' }))
                       }
@@ -442,7 +471,7 @@ function Login() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) => handleInputChange('password', (e.target as HTMLInputElement).value)}
                   placeholder="请输入密码"
                   className={`w-full pl-12 pr-12 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white transition-all ${
                     errors.password ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-orange-400'
@@ -489,7 +518,7 @@ function Login() {
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    onChange={(e) => handleInputChange('confirmPassword', (e.target as HTMLInputElement).value)}
                     placeholder="请再次输入密码"
                     className={`w-full pl-12 pr-12 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white transition-all ${
                       errors.confirmPassword ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-orange-400'
@@ -533,6 +562,14 @@ function Login() {
               </div>
             )}
           </div>
+
+          {/* 错误提示 */}
+          {errors.general && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 animate-fadeIn">
+              <AlertCircle className="w-5 h-5 text-red-500" />
+              <span className="text-red-700">{errors.general}</span>
+            </div>
+          )}
 
           {/* 成功提示 */}
           {successMessage && (
@@ -651,7 +688,7 @@ function Login() {
                     icon={<Mail className="w-5 h-5 text-gray-400" />}
                     type="email"
                     value={forgotFormData.email}
-                    onChange={(e) => handleForgotInputChange('email', e.target.value)}
+                    onChange={(value) => handleForgotInputChange('email', value)}
                     placeholder="请输入邮箱地址"
                     error={forgotErrors.email}
                   />
@@ -660,7 +697,7 @@ function Login() {
                     icon={<Phone className="w-5 h-5 text-gray-400" />}
                     type="tel"
                     value={forgotFormData.phone}
-                    onChange={(e) => handleForgotInputChange('phone', e.target.value)}
+                    onChange={(value) => handleForgotInputChange('phone', value)}
                     placeholder="请输入手机号码"
                     error={forgotErrors.phone}
                   />
@@ -682,7 +719,7 @@ function Login() {
                       icon={<Lock className="w-5 h-5 text-gray-400" />}
                       type="text"
                       value={forgotFormData.code}
-                      onChange={(e) => handleForgotInputChange('code', e.target.value)}
+                      onChange={(value) => handleForgotInputChange('code', value)}
                       placeholder="请输入验证码"
                       error={forgotErrors.code}
                       className="flex-1"
@@ -720,7 +757,7 @@ function Login() {
                       <input
                         type={showForgotPassword ? 'text' : 'password'}
                         value={forgotFormData.newPassword}
-                        onChange={(e) => handleForgotInputChange('newPassword', e.target.value)}
+                        onChange={(e) => handleForgotInputChange('newPassword', (e.target as HTMLInputElement).value)}
                         placeholder="请输入新密码"
                         className={`w-full pl-12 pr-12 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white transition-all ${
                           forgotErrors.newPassword ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-blue-400'
@@ -765,7 +802,7 @@ function Login() {
                       <input
                         type={showForgotConfirmPassword ? 'text' : 'password'}
                         value={forgotFormData.confirmPassword}
-                        onChange={(e) => handleForgotInputChange('confirmPassword', e.target.value)}
+                        onChange={(e) => handleForgotInputChange('confirmPassword', (e.target as HTMLInputElement).value)}
                         placeholder="请再次输入新密码"
                         className={`w-full pl-12 pr-12 py-4 rounded-xl border-2 bg-gray-50 focus:bg-white transition-all ${
                           forgotErrors.confirmPassword ? 'border-red-300 focus:border-red-400' : 'border-gray-200 focus:border-blue-400'

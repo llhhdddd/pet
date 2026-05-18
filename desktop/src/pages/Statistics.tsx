@@ -57,7 +57,7 @@ function Statistics() {
     }
   }
 
-  const loadWarnings = async (classId: number) => {
+  const loadWarnings = async (_classId: number) => {
     try {
       setWarnings([
         { id: 1, type: 'task', message: '张三连续3次未提交作业', student: '张三' },

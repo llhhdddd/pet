@@ -56,15 +56,15 @@ function Class() {
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white text-white-shadow">班级管理</h2>
-            <p className="text-white/80 text-white-shadow">查看和管理你的班级</p>
+            <h2 className="text-2xl font-bold text-orange-800">班级管理</h2>
+            <p className="text-orange-500">查看和管理你的班级</p>
           </div>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
           <Plus className="w-5 h-5" />
           创建班级
         </Button>
-      </div></function></seed:tool_call>
+      </div>
 
       {/* 班级统计 */}
       <div className="grid grid-cols-3 gap-4">

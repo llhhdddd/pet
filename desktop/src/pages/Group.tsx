@@ -76,8 +76,8 @@ function Group() {
             <Users className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">小组管理</h2>
-            <p className="text-white/60">查看和管理你的小组</p>
+            <h2 className="text-2xl font-bold text-orange-800">小组管理</h2>
+            <p className="text-orange-500">查看和管理你的小组</p>
           </div>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>

@@ -34,8 +34,8 @@ function Home() {
           <Cat className="w-7 h-7 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white text-white-shadow">欢迎回来，{user?.username}！</h2>
-          <p className="text-white/80 text-white-shadow">今天也要好好加油哦！💪</p>
+          <h2 className="text-2xl font-bold text-orange-800">欢迎回来，{user?.username}！</h2>
+          <p className="text-orange-600">今天也要好好加油哦！</p>
         </div>
       </div>
 

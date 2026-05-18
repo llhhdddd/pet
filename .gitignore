@@ -52,6 +52,10 @@ dist/
 *.log
 logs/
 
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+
 # OS
 Thumbs.db
 .DS_Store

@@ -14,7 +14,7 @@ function Pet() {
   const [isFeeding, setIsFeeding] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [message, setMessage] = useState('')
-  const [showFoodMenu, setShowFoodMenu] = useState(false)
+  const [_showFoodMenu, setShowFoodMenu] = useState(false)
 
   useEffect(() => {
     if (!currentPet) {
@@ -98,8 +98,8 @@ function Pet() {
           <Cat className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">宠物养成</h2>
-          <p className="text-white/60">照顾你的小宠物</p>
+          <h2 className="text-2xl font-bold text-orange-800">宠物养成</h2>
+          <p className="text-orange-500">照顾你的小宠物</p>
         </div>
       </div>
 

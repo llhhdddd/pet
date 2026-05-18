@@ -14,10 +14,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Shield,
-  ShieldAlert,
-  ShieldCheck,
   AlertCircle,
-  X
 } from 'lucide-react'
 import Card from '../components/common/Card'
 import Button from '../components/common/Button'
@@ -30,7 +27,7 @@ function Profile() {
   const [activeTab, setActiveTab] = useState<TabType>('profile')
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [message, setMessage] = useState({ type: 'success' | 'error', text: '' })
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string }>({ type: 'success', text: '' })
   
   // Profile form state
   const [formData, setFormData] = useState({

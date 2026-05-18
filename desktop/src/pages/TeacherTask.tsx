@@ -172,8 +172,8 @@ function TeacherTask() {
             <ListTodo className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">任务管理</h2>
-            <p className="text-white/60">管理和发布学习任务</p>
+            <h2 className="text-2xl font-bold text-orange-800">任务管理</h2>
+            <p className="text-orange-500">管理和发布学习任务</p>
           </div>
         </div>
         <Button onClick={() => setShowCreateModal(true)}>
@@ -195,7 +195,7 @@ function TeacherTask() {
             className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
               filter === item.key
                 ? 'bg-white text-indigo-600 shadow-lg'
-                : 'bg-white/10 text-white hover:bg-white/20'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             {item.label}

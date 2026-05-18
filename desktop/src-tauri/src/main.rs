@@ -1,8 +1,6 @@
-use tauri::Manager;
-
 fn main() {
   tauri::Builder::default()
-    .setup(|app| {
+    .setup(|_app| {
       Ok(())
     })
     .run(tauri::generate_context!())

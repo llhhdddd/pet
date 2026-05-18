@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     
     # 数据库配置
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/pet_system"
+    DATABASE_URL: str = "sqlite:///./pet_system.db"
     
     # JWT 配置
     SECRET_KEY: str = "your-secret-key-change-in-production"

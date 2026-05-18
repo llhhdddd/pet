@@ -31,7 +31,7 @@ function Layout() {
     navigate('/login')
   }
 
-  const currentPath = location.pathname.replace('/', '') || (user?.role === 'teacher' ? 'class' : 'home')
+  const currentPath = location.pathname === '/' ? 'home' : location.pathname.replace('/', '')
   const navItems = user?.role === 'teacher' ? teacherNavItems : studentNavItems
 
   return (
@@ -62,7 +62,7 @@ function Layout() {
               return (
                 <li key={item.id} className="animate-slideInLeft" style={{ animationDelay: `${index * 50}ms` }}>
                   <button
-                    onClick={() => navigate(`/${item.id}`)}
+                    onClick={() => navigate(item.id === 'home' ? '/' : `/${item.id}`)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 btn-press ${
                       isActive
                         ? 'bg-gradient-to-r from-orange-400 to-amber-500 text-white shadow-lg shadow-orange-200'

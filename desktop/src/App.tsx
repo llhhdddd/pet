@@ -2,11 +2,10 @@ import { Routes, Route } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Layout from './components/common/Layout'
 import Loading from './components/common/Loading'
+import ProtectedRoute from './components/common/ProtectedRoute'
 
 const Home = lazy(() => import('./pages/Home'))
 const Pet = lazy(() => import('./pages/Pet'))
-const Task = lazy(() => import('./pages/Task'))
-const TeacherTask = lazy(() => import('./pages/TeacherTask'))
 const TaskWrapper = lazy(() => import('./pages/TaskWrapper'))
 const Gold = lazy(() => import('./pages/Gold'))
 const Class = lazy(() => import('./pages/Class'))
@@ -22,7 +21,7 @@ function App() {
     <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Home />} />
           <Route path="pet" element={<Pet />} />
           <Route path="task" element={<TaskWrapper />} />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ListTodo, Plus, Calendar, CheckCircle2, XCircle, FileText, Upload, Clock, Award } from 'lucide-react'
+import { ListTodo, Calendar, CheckCircle2, XCircle, FileText, Upload, Clock, Award } from 'lucide-react'
 import Card from '../components/common/Card'
 import Button from '../components/common/Button'
 import useStore from '../store/useStore'
@@ -108,12 +108,6 @@ function Task() {
     quiz: 'bg-orange-100 text-orange-700',
   }
 
-  const statusLabels: Record<string, string> = {
-    draft: '草稿',
-    published: '进行中',
-    closed: '已关闭',
-  }
-
   const getDaysRemaining = (deadline: string) => {
     const today = new Date()
     const deadlineDate = new Date(deadline)
@@ -151,14 +145,14 @@ function Task() {
             <ListTodo className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">任务管理</h2>
-            <p className="text-white/60">查看和完成学习任务</p>
+            <h2 className="text-2xl font-bold text-orange-800">任务管理</h2>
+            <p className="text-orange-500">查看和完成学习任务</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-white">
-          <Award className="w-5 h-5 text-yellow-300" />
+        <div className="flex items-center gap-2 text-orange-700">
+          <Award className="w-5 h-5 text-yellow-500" />
           <span className="font-bold">{goldBalance}</span>
-          <span className="text-white/60">金币</span>
+          <span className="text-orange-500">金币</span>
         </div>
       </div>
 
@@ -175,7 +169,7 @@ function Task() {
             className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
               filter === item.key
                 ? 'bg-white text-indigo-600 shadow-lg'
-                : 'bg-white/10 text-white hover:bg-white/20'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             {item.label}

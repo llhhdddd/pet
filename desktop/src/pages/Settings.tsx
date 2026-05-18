@@ -33,7 +33,7 @@ function SettingsPage() {
 
   const [saved, setSaved] = useState(false)
 
-  const handleInputChange = (category: string, key: string, value: number) => {
+  const handleInputChange = (category: keyof typeof rules, key: string, value: number) => {
     setRules((prev) => ({
       ...prev,
       [category]: {
