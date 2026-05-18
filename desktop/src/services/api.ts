@@ -74,6 +74,9 @@ export const classApi = {
   joinClass: (classId: number, inviteCode: string) =>
     api.post(`/classes/${classId}/join`, { invite_code: inviteCode }),
 
+  joinByCode: (inviteCode: string) =>
+    api.post('/classes/join', { invite_code: inviteCode }),
+
   getClassStatistics: (classId: number) =>
     api.get(`/classes/${classId}/statistics`),
 
@@ -143,14 +146,14 @@ export const taskApi = {
   createTask: (data: {
     class_id: number
     title: string
-    description: string
+    content: string
     task_type: string
     deadline: string
   }) => api.post('/tasks/', data),
 
   updateTask: (taskId: number, data: {
     title?: string
-    description?: string
+    content?: string
     deadline?: string
     status?: string
   }) => api.put(`/tasks/${taskId}`, data),

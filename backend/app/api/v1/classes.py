@@ -286,6 +286,46 @@ def delete_class(
     return None
 
 
+class JoinRequest(BaseModel):
+    invite_code: str
+
+
+@router.post("/join")
+def join_by_code(
+    request: JoinRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """通过邀请码加入班级"""
+    if current_user.role != "student":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="只有学生可以加入班级")
+
+    class_ = db.query(Class).filter(Class.invite_code == request.invite_code).first()
+    if not class_:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="邀请码无效，未找到对应班级")
+
+    is_member = db.query(GroupMember).join(
+        Group, GroupMember.group_id == Group.id
+    ).filter(
+        Group.class_id == class_.id,
+        GroupMember.user_id == current_user.id
+    ).first()
+    if is_member:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="您已加入该班级")
+
+    group = db.query(Group).filter(Group.class_id == class_.id).first()
+    if not group:
+        group = Group(class_id=class_.id, name="默认小组", gold_balance=0.0, growth_value=0, health_value=100)
+        db.add(group)
+        db.commit()
+        db.refresh(group)
+
+    member = GroupMember(group_id=group.id, user_id=current_user.id, contribution=0.0)
+    db.add(member)
+    db.commit()
+    return {"message": "成功加入班级", "class_id": class_.id, "class_name": class_.name}
+
+
 @router.post("/{class_id}/join")
 def join_class(
     class_id: int,

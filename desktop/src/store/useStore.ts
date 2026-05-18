@@ -191,6 +191,9 @@ const useStore = create<AppState>()(
         user: state.rememberMe ? state.user : null,
         token: state.rememberMe ? state.token : null,
         rememberMe: state.rememberMe,
+        currentPet: state.currentPet,
+        currentGroup: state.currentGroup,
+        goldBalance: state.goldBalance,
       }),
     }
   )

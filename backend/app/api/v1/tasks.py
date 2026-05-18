@@ -233,6 +233,7 @@ def create_task(
         )
     
     # 验证小组（如果有）
+    group = None
     if request.group_id:
         group = db.query(Group).filter(Group.id == request.group_id).first()
         if not group:
