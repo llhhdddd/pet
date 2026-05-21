@@ -52,7 +52,8 @@ interface AppState {
   tasks: Task[]
   goldBalance: number
   rememberMe: boolean
-  
+  petWindowVisible: boolean
+
   setUser: (user: User) => void
   setToken: (token: string) => void
   setCurrentGroup: (group: Group) => void
@@ -60,6 +61,7 @@ interface AppState {
   setTasks: (tasks: Task[]) => void
   setGoldBalance: (balance: number) => void
   setRememberMe: (remember: boolean) => void
+  setPetWindowVisible: (visible: boolean) => void
   logout: () => void
   clearAllData: () => void
   
@@ -79,6 +81,7 @@ const useStore = create<AppState>()(
       tasks: [],
       goldBalance: 0,
       rememberMe: false,
+      petWindowVisible: false,
 
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
@@ -87,6 +90,7 @@ const useStore = create<AppState>()(
       setTasks: (tasks) => set({ tasks }),
       setGoldBalance: (balance) => set({ goldBalance: balance }),
       setRememberMe: (remember) => set({ rememberMe: remember }),
+      setPetWindowVisible: (visible: boolean) => set({ petWindowVisible: visible }),
       logout: () => set({
         user: null, 
         token: null, 
@@ -194,6 +198,7 @@ const useStore = create<AppState>()(
         currentPet: state.currentPet,
         currentGroup: state.currentGroup,
         goldBalance: state.goldBalance,
+        petWindowVisible: state.petWindowVisible,
       }),
     }
   )

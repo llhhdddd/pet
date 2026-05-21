@@ -1,5 +1,6 @@
+import { useCallback } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Cat, ListTodo, Coins, Users, Building2, LogOut, BarChart3, Settings, User, Bug } from 'lucide-react'
+import { Home, Cat, ListTodo, Coins, Users, Building2, LogOut, BarChart3, Settings, User, Bug, Monitor } from 'lucide-react'
 import useStore from '../../store/useStore'
 
 const studentNavItems = [
@@ -24,7 +25,27 @@ const teacherNavItems = [
 function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, logout, currentGroup, goldBalance } = useStore()
+  const { user, logout, currentGroup, goldBalance, petWindowVisible, setPetWindowVisible } = useStore()
+
+  const togglePetWindow = useCallback(async () => {
+    const next = !petWindowVisible
+    setPetWindowVisible(next)
+
+    if ('__TAURI_INTERNALS__' in window) {
+      try {
+        const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow')
+        const petWin = await WebviewWindow.getByLabel('pet')
+        if (petWin) {
+          if (next) {
+            await petWin.show()
+            await petWin.setFocus()
+          } else {
+            await petWin.hide()
+          }
+        }
+      } catch { /* 忽略 */ }
+    }
+  }, [petWindowVisible, setPetWindowVisible])
 
   const handleLogout = () => {
     logout()
@@ -129,6 +150,17 @@ function Layout() {
                   <span className="font-bold text-amber-700">{goldBalance}</span>
                 </div>
               )}
+              <button
+                onClick={togglePetWindow}
+                title={petWindowVisible ? '隐藏桌面宠物' : '召唤桌面宠物'}
+                className={`p-2.5 rounded-full transition-all duration-300 ${
+                  petWindowVisible
+                    ? 'bg-gradient-to-r from-pink-400 to-rose-500 text-white shadow-lg shadow-pink-200 animate-pulse-slow'
+                    : 'bg-white/60 text-gray-500 hover:text-orange-600 hover:bg-orange-100'
+                }`}
+              >
+                <Monitor className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </header>

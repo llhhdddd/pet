@@ -16,7 +16,22 @@
         "width": 800,
         "height": 600,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "label": "main"
+      },
+      {
+        "label": "pet",
+        "title": "桌面宠物",
+        "width": 200,
+        "height": 220,
+        "resizable": false,
+        "fullscreen": false,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "transparent": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "url": "/pet.html"
       }
     ],
     "security": {
